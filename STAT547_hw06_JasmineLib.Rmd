@@ -1,40 +1,42 @@
 ---
 title: "STAT547_hw06_JasmineLib"
 output: github_document
+always_allow_html: yes
 ---
 #Jasmine's STAT 547 Homework  06
 
-Sections tackled: 
-1) Working with Character Data - Completed the Exercises from Strings chapter in R for Data Science    
-  - provide solutions to the exercises, to serve as an example and reference point for future work and assignments.  
-  - create relevant "test vectors" and examples to improve understanding.
-2) Writing functions:   
-  - worked through the exercise on a linear regression function customized for gapminder data ()    
-  - as part of this assignment, made a function to perform a quadratic regression on gapminder data.     
-  - also made functions for simple visualization of regression line data on a basic ggplot.  
+Sections tackled:   
+
+Option 1 Working with Character Data - Completed the Exercises from Strings chapter in R for Data Science      
+
+  - provide solutions to the exercises, to serve as an example and reference point for future work and assignments.    
+  - create relevant "test vectors" and examples to improve understanding.    
+  
+Option 2 Writing functions:     
+
+  - worked through the exercise on a linear regression function customized for gapminder data ()      
+  - as part of this assignment, made a function to perform a quadratic regression on gapminder data.       
+  - also made functions for simple visualization of regression line data on a basic ggplot.    
 
 
 ```{r}
-library(purrr)
-library(repurrrsive)
-library(singer)
-library(ggmap)
-library(leaflet)
+
 library(tidyverse)
 library(stringr)
 
 ```
 
 
-## Part 1: Exercises in R for Data Science Strings Chapter:
+## Part 1: Exercises in R for Data Science Strings Chapter:  
+here  I work through all the exercises from the Strings Chapter. in the [R for Data Science Textbook](https://r4ds.had.co.nz/strings.html).   
 
 ###14.2 String basics 
 
-What is difference between paste() and paste0() and what is the equivalent stringr function?
+What is difference between paste() and paste0() and what is the equivalent stringr function?  
 
-How do they differ in their handling of NA? 
-- using paste or paste0 , the NA will get coerced into a character, then pasted.
-- using str_c, if there is an NA in either vector, it will return NA. 
+How do they differ in their handling of NA?   
+- using paste or paste0 , the NA will get coerced into a character, then pasted.  
+- using str_c, if there is an NA in either vector, it will return NA.   
 
 ```{r}
 library(stringr)
@@ -51,14 +53,19 @@ paste0(test_vector1, test_vector2)
 #str_c is the equivalent stringr function. Here we specify the separation using sep. 
 str_c(test_vector1, test_vector2, sep = " ")
 
-#In your own words, describe the difference between the sep and collapse arguments to str_c().
+```
+
+
+In your own words, describe the difference between the sep and collapse arguments to str_c().
+```{r}
 # using collapse will combine ALL entries within a vector, separated by ", " in this case. Using Sep will separate the two components being combined. 
 str_c(letters, LETTERS, collapse = ", " )
 str_c(letters, LETTERS, sep = ", " )
 
+```
 
-#Use str_length() and str_sub() to extract the middle character from a string. What will you do if the string has an even number of characters?
-
+Use str_length() and str_sub() to extract the middle character from a string.  
+```{r}
 #check length of a string:
 str_length("teststring")
 #for even numbers I chose to return a substring composed of the 5th and 6th (middle characters) of the string
@@ -78,7 +85,10 @@ str_trim("     teststring, string, testing     ")
 
 
 
-#Write a function that turns (e.g.) a vector c("a", "b", "c") into the string a, b, and c. Think carefully about what it should do if given a vector of length 0, 1, or 2.
+```
+
+Write a function that turns (e.g.) a vector c("a", "b", "c") into the string a, b, and c. Think carefully about what it should do if given a vector of length 0, 1, or 2.
+```{r}
 
 test_vector_3 = c("1", "2")
 
@@ -93,32 +103,34 @@ vector_to_string = function(x) {
 
 vector_to_string(test_vector_3)
 
-  
 ```
-
 
 ##14.3 Matching patterns with regular expressions
 
+Explain why each of these strings don’t match a \: "\", "\\", "\\\".  
+- \ corresponds to a \ used for an escape symbol also used in strings.  
+- \\ is used for escaping a "." character in regular expressions.  
+- \\\ is not used. to escape a \ symbol, we will need: \\\\
+
+
 ```{r}
-#Explain why each of these strings don’t match a \: "\", "\\", "\\\".
-# \ corresponds to a \ used for an escape symbol also used in strings.
-# \\ is used for escaping a "." character in regular expressions.
-#\\\ is not used. to escape a \ symbol, we will need: \\\\
-
-
 #How would you match the sequence "'\?
 #I would match the sequence using: 
 
 j = "\"'\\" #need to add extra \ to the sequence due to needing to "escape" some characters.
 str_view(j, "\\\"'\\\\")
 
-#What patterns will the regular expression \..\..\.. match? How would you represent it as a string?
-#will match expressions starting with a dot then any character three times.
-str_view(c(".d.e.f", "......", ".e.e.ddee"), c("\\..\\..\\.."))
-
 ```
 
-14.3.2 Anchors
+```{r}
+#What patterns will the regular expression \..\..\.. match? How would you represent it as a string?
+
+#will match expressions starting with a dot then any character three times.
+str_view(c(".d.e.f", "......", ".e.e.ddee"), c("\\..\\..\\.."))
+```
+
+##14.3.2 Anchors
+
 ```{r}
 # How would you match the literal string "$^$"?
 x = "$^$"
@@ -142,7 +154,7 @@ str_view(words, "^.......", match = TRUE)
 
 ```
 
-14.3.3 Character classes and alternatives
+##14.3.3 Character classes and alternatives
 ```{r}
 # Create Regular expressions to find all words that:
   #start with a vowel: 
@@ -177,7 +189,7 @@ str_view(phone_number_list, "^(\\d\\d\\d-\\d\\d\\d-\\d\\d\\d\\d|^\\d-\\d\\d\\d-\
 
 ```
 
-14.3.4 Repetition
+##14.3.4 Repetition
 
 ```{r}
 #Describe the equivalents of ?, +, * in {m,n} form.
@@ -185,6 +197,8 @@ str_view(phone_number_list, "^(\\d\\d\\d-\\d\\d\\d-\\d\\d\\d\\d|^\\d-\\d\\d\\d-\
 #+ = 1 or more = {1,}
 #* = 0 or more = {0,}
 
+
+#make a vector to test repeats:
 test_repeats = c("abcde", "aabbccde", "ccccccdddddd")
 
 str_view(test_repeats, "a{0,1}")
@@ -196,7 +210,8 @@ str_view(test_repeats, "a{0,}")
 # ^.*$ will match to any string. 
 # "\\{.+\\}" will match to 1 or more characters surrounded by curly braces in a string. ex: {a} or {abcde}
 # \d{4}-\d{2}-\d{2} will match to any numbers that fit the following format: 1111-11-11
-#"\\\\{4}" will match to any string containing four backslashes. such as \\\\abcd (written as a string: "\\\\\\\\abcd")
+#"\\\\{4}" will match to any string containing four backslashes. 
+# for example: \\\\abcd (written as a string: "\\\\\\\\abcd")
 
 str_view("\\\\\\\\abcd", "\\\\{4}")
 
@@ -213,12 +228,13 @@ str_view(words, "([aeiou][^aeiou]){2,}", match = TRUE)
 
 
 #Solve the beginner regexp crosswords at https://regexcrossword.com/challenges/beginner.
-#was not able to recreate the crossword here, but I was able to solve 2 of the beginner crosswords that I attempted.
+#was not able to recreate the crossword here
+#but I was able to solve 2 of the beginner crosswords that I attempted.
 
 
 ```
 
-14.3.5 Grouping and backreferences
+##14.3.5 Grouping and backreferences
 ```{r}
 #describe in words what these expressions will match:
 #(.)\1\1 will match any character that repeats 3 times
@@ -227,7 +243,9 @@ str_view(words, "([aeiou][^aeiou]){2,}", match = TRUE)
 
 #(..)\1 will match any characters that repeat twice such as "haha" or "hehe"
 
-#"(.).\\1.\\1" will match any characters where the first character is repeated three times, starting once at the start of the pattern, then two more times but with any character in between the two other times. for example "nanin" "tgtkt"
+#"(.).\\1.\\1" will match any characters where the first character is repeated three times, 
+#starting once at the start of the pattern, then two more times but with any character in between the two other times. 
+#for example "nanin" "tgtkt"
 
 #"(.)(.)(.).*\\3\\2\\1" will match strings with the pattern: "abckcba" or "123i321" or "123ijklmnop321"
 a = "123iiddssfe32144444"
@@ -250,9 +268,12 @@ str_view(c("eleven", "notamatch", "caravans", "carraavvans"), "(.).*\\1.*\\1.*")
 ```
 
 
-14.4.1 Detect matches
+##14.4.1 Detect matches
 ```{r}
-#For each of the following challenges, try solving it by using both a single regular expression, and a combination of multiple str_detect() calls.
+#For each of the following challenges, try solving it by using both a single regular expression, 
+#and a combination of multiple str_detect() calls.
+
+
 #words starting or ending in x
 endx = str_detect(words,"x$")
 startx = str_detect(words,"^x")
@@ -281,9 +302,14 @@ words[which(number_vowels == max(number_vowels))]
 #highest proportion: 
 proportion_vowels = str_count(words, "[aeiou]")/str_length(words)
 words[which(proportion_vowels == max(proportion_vowels))]
+
 ```
 
-14.4.3 Extract matches
+
+
+##14.4.3 Extract matches
+
+
 ```{r}
 #In the previous example, you might have noticed that the regular expression matched “flickered”, which is not a colour. Modify the regex to fix the problem.
 #adding [^a-z] will remove any a-z characters before the word red.
@@ -300,6 +326,12 @@ sentences %>%
   str_extract("[A-Za-z]+") %>% 
   head()
 
+
+
+
+
+
+
 #extract all words ending in ing: 
 
 unlist(str_extract_all(sentences, "[a-zA-Z]+ing"))
@@ -311,7 +343,7 @@ unlist(str_extract_all(sentences, "[a-zA-Z]+s"))
 
 ```
 
-14.4.4 Grouped matches
+##14.4.4 Grouped matches
 ```{r}
 #Find all words that come after a “number” like “one”, “two”, “three” etc. Pull out both the number and the word.
 tibble(sentence = sentences) %>% 
@@ -330,7 +362,7 @@ tibble(sentence = sentences) %>%
 
 ```
 
-14.4.5 Replacing matches
+##14.4.5 Replacing matches
 ```{r}
 #Replace all forward slashes in a string with backslashes.
 
@@ -347,7 +379,7 @@ str_replace_all(sentences, c("A" = "a", "B" = "b", "C" = "c", "D" = "d", "E" = "
 words [words %in% str_replace(words, "^([a-zA-Z])(.*)([a-z])$", "\\3\\2\\1")]
 ```
 
-14.4.6 Splitting
+##14.4.6 Splitting
 ```{r}
 #Split up a string like "apples, pears, and bananas" into individual components.
 
@@ -361,7 +393,8 @@ str_split("apples, pears, and bananas", "")
 #splitting by "" will split the string into individual characters, including spaces (whitespace), and punctuation.
 ```
 
-14.5 Other types of pattern
+##14.5 Other types of pattern
+**missing 
 ```{r}
 #How would you find all strings containing \ with regex() vs. with fixed()?
 #using regex(): 
@@ -383,7 +416,7 @@ words_in_sentences = str_split(str_to_lower(sentences), boundary("word"), simpli
 
 
 
-14.7 stringi
+##14.7 stringi
 ```{r}
 #Find the stringi functions that:
 #https://www.rdocumentation.org/packages/stringi/versions/1.2.4
@@ -399,7 +432,7 @@ words_in_sentences = str_split(str_to_lower(sentences), boundary("word"), simpli
 
 
 
-
+#Part 2: Write one (or more) functions that do something useful to pieces of the Gapminder data.
 
 ```{r}
 library(gapminder)
@@ -407,6 +440,9 @@ suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(dplyr))
 
 ```
+
+The first part of this exercise is based on the tutorial provided on [linear regression functions](http://stat545.com/block012_function-regress-lifeexp-on-year.html)  
+The second part of this exercise will branch off from this starting point. 
 
 
 First step, pick one country to work with as a starting point:
@@ -431,7 +467,7 @@ fit_lm_regression_canada = lm(lifeExp ~ year, country_data_Canada)
 coefficients(fit_lm_regression_canada)
 ```
 From this intercept, we know that something is off in our fit, because the intercept should no go all the way down to -358 years. 
-Here, we re-set the parameters for the plot so that we make the intercept match up to 1952, our earliest datapoint:
+Here, we can reset the parameters for the plot so that we make the intercept match up to 1952, our earliest datapoint:
 ```{r}
 fit_lm_regression_canada = lm(lifeExp ~I(year-1952), country_data_Canada)
 coefficients(fit_lm_regression_canada)
@@ -461,13 +497,16 @@ country_data_Kenya %>%
   geom_point()
 ```
 
+
 We can see here that while the function worked, it appears to fit a quadratic model, rather than linear. This is how we can generalize the lm method to fit a quadratic model: 
 ```{r}
+#first, make a ggplot of what we would be modeling in our function to visualize:
 country_data_Kenya %>% 
   ggplot() + aes(x = year, y = lifeExp) +
   geom_smooth(method ="lm", formula = y~x+I(x^2)) +
   geom_point()
 
+#write a function for quadratic equation fitting to the data
 quadratic_regression_fit = function(gap_data, offset = 1952) {
   quadratic_fit = lm(lifeExp~I(year-offset)+I((year-offset)^2), gap_data)
   setNames(coefficients(quadratic_fit), c("intercept", "coefficient x", "coefficient x^2"))
@@ -478,15 +517,49 @@ quadratic_regression_fit(country_data_Kenya)
 
 ```
 
-Would it also be more useful to have a way to directly plot either a linear or quadratic fit into ggplot data?
+This is great, but it would be easier if we didn't have to create a dataset each time we want to call our function. 
+This can be modified by having our function create it's own filtered dataset by filtering by country name.
+
+```{r}
+#update linear regression function: 
+linear_regression_fit = function(countryname = "", offset = 1952) {
+  gap_data = gapminder %>%
+    filter(country == countryname)
+  linear_fit = lm(lifeExp~I(year-offset), gap_data)
+  setNames(coef(linear_fit), c("intercept", "slope"))
+} 
+
+#test to see if we get the same coefficients for Canada as before:
+linear_regression_fit("Canada")
+
+#update quadratic regression function:
+quadratic_regression_fit = function(countryname = "", offset = 1952) {
+  gap_data = gapminder %>% 
+  filter(country == countryname)
+  quadratic_fit = lm(lifeExp~I(year-offset)+I((year-offset)^2), gap_data)
+  setNames(coefficients(quadratic_fit), c("intercept", "coefficient x", "coefficient x^2"))
+}
+
+#test to see if we get the same coefficients for Kenya as before:
+quadratic_regression_fit("Kenya")
+
+```
+  
+Conclude:
+Yes, the coefficients obtained are the same as previous, and pass a visual "sanity check". 
+
+
+For the sake of this assignment, I found it useful to have a way to directly plot either a linear or quadratic fit into ggplot data?
 ```{r}
 
-linearfit_ggplot = function (countryname ="") {
+linearfit_ggplot = function (countryname = "") {
   gapminder %>% 
   filter (country ==countryname) %>% 
   ggplot() + aes(x = year, y = lifeExp) +
   geom_smooth(method ="lm") +
-  geom_point()
+  geom_point() + 
+  ggtitle("Linear Fit of Life Expectancy Over Time") 
+  
 }
 
 linearfit_ggplot("Japan")
@@ -497,14 +570,15 @@ quadraticfit_ggplot = function (countryname = "") {
     filter(country == countryname) %>% 
     ggplot() + aes(x = year, y = lifeExp) +
     geom_smooth(method = "lm", formula = y~x+I(x^2) )+
-    geom_point()
+    geom_point() + 
+    ggtitle("Quadratic Fit of Life Expectancy Over Time")
   
 }
 
 quadraticfit_ggplot("Kenya")
-quadraticfit_ggplot("Germany")
-linearfit_ggplot("Germany")
 ```
+  
+Conclusion: Here we have simplified the process of making a quick plot to check our functions, by writing another function for linear and quadratic fits in ggplot.
 
 Testing the function: 
 Try to break the function
@@ -524,24 +598,119 @@ Try to break the function
 #we can further refine the function using Stop if not:
 
 quadratic_regression_fit = function(countryname = "", offset = 1952) {
+  
+  if (!is.character(countryname)) {
+        stop(paste("expecting input for countryname to be a string corresponding to a country in ggplot. You gave me ",
+                   typeof(countryname)))
+    }
   gap_data = gapminder %>% 
   filter(country == countryname)
   quadratic_fit = lm(lifeExp~I(year-offset)+I((year-offset)^2), gap_data)
   setNames(coefficients(quadratic_fit), c("intercept", "coefficient x", "coefficient x^2"))
-  
-  
 }
 
+#now if we enter a non-character input, we will return an error:
+#returns you gave me list:
+#quadratic_regression_fit(gapminder)
 
+#returns you gave me double:
+#quadratic_regression_fit(2)
 
-quadratic_regression_fit("Canada")
 quadratic_regression_fit("Kenya")
-quadratic_regression_fit("Spain")
 
-quadraticfit_ggplot("Spain")
+#applying the same stop if not for the linear regression function:
+linear_regression_fit = function(countryname = "", offset = 1952) {
+  if (!is.character(countryname)) {
+        stop(paste("expecting input for countryname to be a string corresponding to a country in ggplot. You gave me ",
+                   typeof(countryname)))
+    }
+  gap_data = gapminder %>%
+    filter(country == countryname)
+  linear_fit = lm(lifeExp~I(year-offset), gap_data)
+  setNames(coef(linear_fit), c("intercept", "slope"))
+} 
+
+#returns you gave me double: 
+#linear_regression_fit(2)
+
+
 ```
 
-#use coefficients to make a Life expectancy estimator for a certain year.
+
+Now that we have these two nice functions to make linear and quadratic fits for the data, the next logical step is to be able to estimate life expectancy based on this data. 
+```{r}
+quadratic_regression_fit_estimate = function(countryname = "", year_estimate = 1999, offset = 1952) {
+  #we want the year_estimate to be an integer between 1952 and 2007 (useful for estimating years not provided in gapminder dataset )
+   if (!is.double(year_estimate)) {
+        stop(paste("expecting input for year_estimate to be an integer between 1952 and 2007. You gave me ",
+                   typeof(year_estimate)))
+    }
+  if (!is.character(countryname)) {
+        stop(paste("expecting input for countryname to be a string corresponding to a country in ggplot. You gave me ",
+                   typeof(countryname)))
+  }
+   if (year_estimate > 2007 | year_estimate <1952) {
+        stop("expecting input for year_estimate to be an integer between 1952 and 2007.")
+    }
+  gap_data = gapminder %>% 
+  filter(country == countryname)
+  quadratic_fit = lm(lifeExp~I(year-offset)+I((year-offset)^2), gap_data)
+  setNames(coefficients(quadratic_fit), c("intercept", "coefficient x", "coefficient x^2"))
+  x2_coeff = coefficients(quadratic_fit)[3]
+  x_coeff = coefficients(quadratic_fit)[2]
+  intercept_value = coefficients(quadratic_fit)[1]
+  offsetyear = year_estimate-offset
+ # x2_coeff
+  #x_coeff
+  #intercept_value
+ life_exp_estimate = intercept_value + x2_coeff*offsetyear^2 + x_coeff*offsetyear
+ life_exp_estimate
+}
+#this returns a value of 55.24 years. 
+quadratic_regression_fit_estimate("Kenya", 2000)
+
+#checking with our ggplot quadratic fit, does this seem reasonable? 
+quadraticfit_ggplot("Kenya")
+
+```
+
+Conclude: Yes, from the output returned and the quadratic fit plot, the estimate of 55 years does seem reasonable. 
 
 
+Now we can repeat the same process to estimate life expectancy for data fitted to a linear model:
 
+```{r}
+linear_regression_fit_estimate = function(countryname = "", year_estimate = 1999, offset = 1952) {
+  #we want the year_estimate to be an integer between 1952 and 2007 (useful for estimating years not provided in gapminder dataset )
+   if (!is.double(year_estimate)) {
+        stop(paste("expecting input for year_estimate to be an integer between 1952 and 2007. You gave me ",
+                   typeof(year_estimate)))
+    }
+  if (!is.character(countryname)) {
+        stop(paste("expecting input for countryname to be a string corresponding to a country in ggplot. You gave me ",
+                   typeof(countryname)))
+  }
+   if (year_estimate > 2007 | year_estimate <1952) {
+        stop("expecting input for year_estimate to be an integer between 1952 and 2007.")
+   }
+  
+  gap_data = gapminder %>%
+    filter(country == countryname)
+  linear_fit = lm(lifeExp~I(year-offset), gap_data)
+  setNames(coef(linear_fit), c("intercept", "slope"))
+  x_coeff = coefficients(linear_fit)[2]
+  intercept_value = coefficients(linear_fit)[1]
+  offsetyear = year_estimate-offset
+  #x_coeff
+  #intercept_value
+ life_exp_estimate = intercept_value + x_coeff*offsetyear
+ life_exp_estimate
+} 
+
+linear_regression_fit_estimate("Canada", 2000)
+linearfit_ggplot("Canada")
+ 
+```
+  
+  Conclude: 
+  Sanity Check: the estimated life expectancy for this year matches with what we can see on the plot. 
