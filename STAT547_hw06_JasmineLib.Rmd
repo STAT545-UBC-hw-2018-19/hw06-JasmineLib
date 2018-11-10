@@ -23,6 +23,8 @@ Option 2 Writing functions:
 
 library(tidyverse)
 library(stringr)
+library(dplyr)
+library(stringi)
 
 ```
 
@@ -39,7 +41,6 @@ How do they differ in their handling of NA?
 - using str_c, if there is an NA in either vector, it will return NA.   
 
 ```{r}
-library(stringr)
 
 test_vector1 = c("A", "B", NA, "C")
 test_vector2 = c("D", "E", "F", NA)
@@ -270,38 +271,43 @@ str_view(c("eleven", "notamatch", "caravans", "carraavvans"), "(.).*\\1.*\\1.*")
 
 ##14.4.1 Detect matches
 ```{r}
+library(stringi)
+library(stringr)
 #For each of the following challenges, try solving it by using both a single regular expression, 
 #and a combination of multiple str_detect() calls.
 
-
 #words starting or ending in x
-endx = str_detect(words,"x$")
-startx = str_detect(words,"^x")
-words[endx|startx]
+words_in_x = c("six", "seven", "xylophone", "exit")
+endx = str_detect(words_in_x,"x$")
+startx = str_detect(words_in_x,"^x")
+words_in_x[endx|startx]
 
 #words starting with vowel and ending in consonant
-start_vowel = str_detect(words, "^[aeiou]")
-end_consonant = str_detect(words, "[^aeiou]$")
-words[start_vowel & end_consonant]
+vowel_consonant = c("notamatch","elect", "too", "all", "alice")
+start_vowel = str_detect(vowel_consonant, "^[aeiou]")
+end_consonant = str_detect(vowel_consonant, "[^aeiou]$")
+vowel_consonant[start_vowel & end_consonant]
 
 #Are there any words that contain at least one of each different vowel?
+#no there are not, as no words are returned from the call below:
 contain_a = str_detect(words, "a")
 contain_e = str_detect(words, "e")
 contain_i = str_detect(words,"i")
 contain_o = str_detect(words,"o")
 contain_u = str_detect(words,"u")
 words[contain_a & contain_e & contain_i & contain_o & contain_u]
-#no there are not.
-#using a regular expression for this would be much more complicated, as we would need to consider each possible order of vowels in the string.
 
 
-#What word has the highest number of vowels? What word has the highest proportion of vowels? (Hint: what is the denominator?)
+#What word has the highest number of vowels? 
 number_vowels = str_count(words, "[aeiou]")
-words[which(number_vowels == max(number_vowels))]
+words[which(number_vowels == max(number_vowels))] %>% 
+  head()
+#What word has the highest proportion of vowels? (Hint: what is the denominator?)
 
 #highest proportion: 
 proportion_vowels = str_count(words, "[aeiou]")/str_length(words)
-words[which(proportion_vowels == max(proportion_vowels))]
+words[which(proportion_vowels == max(proportion_vowels))] %>% 
+  head()
 
 ```
 
@@ -326,35 +332,29 @@ sentences %>%
   str_extract("[A-Za-z]+") %>% 
   head()
 
-
-
-
-
-
-
 #extract all words ending in ing: 
 
-unlist(str_extract_all(sentences, "[a-zA-Z]+ing"))
+unlist(str_extract_all(sentences, "[a-zA-Z]+ing")) %>% 
+  head()
 
 #plurals
 #for this exercise I will look at words ending in "s"
 
-unlist(str_extract_all(sentences, "[a-zA-Z]+s"))
+unlist(str_extract_all(sentences, "[a-zA-Z]+s")) %>% 
+  head()
 
 ```
 
 ##14.4.4 Grouped matches
 ```{r}
-#Find all words that come after a “number” like “one”, “two”, “three” etc. Pull out both the number and the word.
+#Find all words that come after a “number” like “one”, “two”, “three” etc. 
+#Pull out both the number and the word.
 tibble(sentence = sentences) %>% 
  str_extract_all("(one|two|three|four|five|six|seven|eight|nine|ten) ([^ ]+)"
   )
 
 
-
-
 #Find all contractions.
-
 
 tibble(sentence = sentences) %>% 
   str_extract_all("[^ ]+\\'[^ .]")
@@ -372,11 +372,13 @@ backslashes = str_replace_all(slashes,"\\/", "\\\\")
 writeLines(backslashes)
 
 #Implement a simple version of str_to_lower() using replace_all().
-str_replace_all(sentences, c("A" = "a", "B" = "b", "C" = "c", "D" = "d", "E" = "e", "F" = "f", "G" = "g", "H" = "h", "I" = "i", "J" = "j", "K" = "k", "L" = "l", "M" = "m", "N" = "n", "O" = "o", "P"="p", "Q"="q", "R" = "r", "S" = "s", "T" = "t", "U" = "u", "V" = "v", "W" = "w", "X" ="x", "Y" = "y", "Z" ="z" ))
+str_replace_all(sentences, c("A" = "a", "B" = "b", "C" = "c", "D" = "d", "E" = "e", "F" = "f", "G" = "g", "H" = "h", "I" = "i", "J" = "j", "K" = "k", "L" = "l", "M" = "m", "N" = "n", "O" = "o", "P"="p", "Q"="q", "R" = "r", "S" = "s", "T" = "t", "U" = "u", "V" = "v", "W" = "w", "X" ="x", "Y" = "y", "Z" ="z" )) %>% 
+  head()
 
 
 #Switch the first and last letters in words. Which of those strings are still words?
-words [words %in% str_replace(words, "^([a-zA-Z])(.*)([a-z])$", "\\3\\2\\1")]
+words [words %in% str_replace(words, "^([a-zA-Z])(.*)([a-z])$", "\\3\\2\\1")] %>% 
+  head()
 ```
 
 ##14.4.6 Splitting
@@ -386,15 +388,17 @@ words [words %in% str_replace(words, "^([a-zA-Z])(.*)([a-z])$", "\\3\\2\\1")]
 str_split("apples, pears, and bananas", ", and |, ")
 
 #Why is it better to split up by boundary("word") than " "?
-#using boundary(word) will handle the spaces and other characters not part of a word (such as punctuation or numbers) nicely
+#using boundary will handle spaces and other characters not part of a word (linke punctuation or numbers)
 
 #What does splitting with an empty string ("") do? Experiment, and then read the documentation.
 str_split("apples, pears, and bananas", "")
-#splitting by "" will split the string into individual characters, including spaces (whitespace), and punctuation.
+#splitting by "" will split the string into individual characters, 
+#including spaces (whitespace), and punctuation.
 ```
 
 ##14.5 Other types of pattern
-**missing 
+
+
 ```{r}
 #How would you find all strings containing \ with regex() vs. with fixed()?
 #using regex(): 
@@ -404,10 +408,25 @@ str_view_all(test_vector_4, regex("\\\\"))
 
 #using fixed():
 str_view_all(test_vector_4, fixed("\\"))
-#What are the five most common words in sentences?
+
 
 #What are the five most common words in sentences?
-words_in_sentences = str_split(str_to_lower(sentences), boundary("word"), simplify = TRUE)
+#obtain a vector of all words in the sentences list by using str_extract_all and use unlist to convert the list to a vector:
+words_in_sentences = unlist(str_extract_all(str_to_lower(sentences), boundary("word")))
+
+topwords = words_in_sentences %>% 
+  tibble() %>% 
+  set_names("commonwords") %>% 
+  group_by(commonwords) %>% 
+  count() 
+
+
+
+topwords
+#I was not able to get past this point. 
+#could not determine how to adequately sort the data to obtain top most used words.
+#visually, by sorting through this counted data, I was able to determine that some the most common words include:
+# "a", "and", "in", "is"
 
 
 
@@ -442,6 +461,8 @@ suppressPackageStartupMessages(library(dplyr))
 ```
 
 The first part of this exercise is based on the tutorial provided on [linear regression functions](http://stat545.com/block012_function-regress-lifeexp-on-year.html)  
+The first part is heavily based on the tutorial, but is necessary to provide context and understanding for the functions that I make next. I specify below the point where I depart from the tutorial and start with my own work. 
+
 The second part of this exercise will branch off from this starting point. 
 
 
@@ -498,6 +519,8 @@ country_data_Kenya %>%
 ```
 
 
+*Here is where I start original work*
+
 We can see here that while the function worked, it appears to fit a quadratic model, rather than linear. This is how we can generalize the lm method to fit a quadratic model: 
 ```{r}
 #first, make a ggplot of what we would be modeling in our function to visualize:
@@ -508,6 +531,7 @@ country_data_Kenya %>%
 
 #write a function for quadratic equation fitting to the data
 quadratic_regression_fit = function(gap_data, offset = 1952) {
+  #add a square function here:
   quadratic_fit = lm(lifeExp~I(year-offset)+I((year-offset)^2), gap_data)
   setNames(coefficients(quadratic_fit), c("intercept", "coefficient x", "coefficient x^2"))
 
@@ -546,10 +570,10 @@ quadratic_regression_fit("Kenya")
 ```
   
 Conclude:
-Yes, the coefficients obtained are the same as previous, and pass a visual "sanity check". 
+Yes, the coefficients obtained for Canada's linear fit and Kenya's quadratic are the same as previously obtained. 
 
 
-For the sake of this assignment, I found it useful to have a way to directly plot either a linear or quadratic fit into ggplot data?
+For the sake of this assignment, I also found it useful to have a way to directly plot either a linear or quadratic fit into ggplot data: 
 ```{r}
 
 linearfit_ggplot = function (countryname = "") {
@@ -580,7 +604,7 @@ quadraticfit_ggplot("Kenya")
   
 Conclusion: Here we have simplified the process of making a quick plot to check our functions, by writing another function for linear and quadratic fits in ggplot.
 
-Testing the function: 
+The next step is to test the function: 
 Try to break the function
 ```{r}
 #the function should not work if I enter a country that is not in the gapminder dataset.
@@ -594,8 +618,6 @@ Try to break the function
 #quadratic_regression_fit(2)
 #quadraticfit_ggplot(3)
 #linear_regression_fit(4)
-
-#we can further refine the function using Stop if not:
 
 quadratic_regression_fit = function(countryname = "", offset = 1952) {
   
@@ -616,6 +638,7 @@ quadratic_regression_fit = function(countryname = "", offset = 1952) {
 #returns you gave me double:
 #quadratic_regression_fit(2)
 
+#this should work:
 quadratic_regression_fit("Kenya")
 
 #applying the same stop if not for the linear regression function:
@@ -669,7 +692,7 @@ quadratic_regression_fit_estimate = function(countryname = "", year_estimate = 1
 #this returns a value of 55.24 years. 
 quadratic_regression_fit_estimate("Kenya", 2000)
 
-#checking with our ggplot quadratic fit, does this seem reasonable? 
+#checking with our ggplot quadratic fit, does this estimate seem reasonable? 
 quadraticfit_ggplot("Kenya")
 
 ```
@@ -712,5 +735,5 @@ linearfit_ggplot("Canada")
  
 ```
   
-  Conclude: 
-  Sanity Check: the estimated life expectancy for this year matches with what we can see on the plot. 
+  Conclude:   
+  Sanity Check: the estimated life expectancy for this year matches with what we can see on the plot of the linear regression. 
