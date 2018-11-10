@@ -1,7 +1,6 @@
 ---
 title: "STAT547_hw06_JasmineLib"
-output: github_document
-always_allow_html: yes
+output: html_document
 ---
 #Jasmine's STAT 547 Homework  06
 
