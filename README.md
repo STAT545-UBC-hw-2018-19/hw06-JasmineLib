@@ -8,7 +8,8 @@ The rmd file for homework 6 can be found [here](https://github.com/STAT545-UBC-s
 the md file for homework 6 can be found [here](https://github.com/STAT545-UBC-students/hw06-JasmineLib/blob/master/STAT547_hw06_JasmineLib.md)  
 
 Note that due to the use of stringr, some of the output requires html. 
-for this reason, I have also attached an HTML file, which can be found [here](https://raw.githubusercontent.com/STAT545-UBC-students/hw06-JasmineLib/master/STAT547_hw06_JasmineLib.html), though it is in a raw format. 
+for this reason, I have also attached an HTML file, which can be found [here](https://raw.githubusercontent.com/STAT545-UBC-students/hw06-JasmineLib/master/STAT547_hw06_JasmineLib.html), though it is in a raw format.   
+Perhaps an easier way to view the output is through [this PDF file](https://github.com/STAT545-UBC-students/hw06-JasmineLib/blob/master/STAT547_hw06_JasmineLib.pdf) generated from the HTML version.
 
 **In this assignment, I tackled exercise options 1 and 2.**
 
